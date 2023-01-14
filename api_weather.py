@@ -7,6 +7,8 @@ import requests
 import shutil
 import os
 
+load_dotenv()
+
 def get_weather_forecast(city_name, api_key):
     '''Получает данные из API '''
     weather = []
@@ -41,9 +43,9 @@ def get_weather_forecast(city_name, api_key):
         weather.append(weather_city)
     return weather
 
-def convert_list_to_gzip(list):
+def convert_list_to_gzip(lst):
     '''Сохраняет список как csv и затем конвертирует в gzip с новым сохранением'''
-    df = pd.DataFrame(list)
+    df = pd.DataFrame(lst)
     df.to_csv(r"./weather.csv")
     with open('./weather.csv', 'rb') as f_in:
         with gzip.open('./weather.csv.gz', 'wb') as f_out:
@@ -51,9 +53,9 @@ def convert_list_to_gzip(list):
 
 
 with open("./city_name.cfg", "r") as file:
-    city_names = list(file.read().split(','))
+    city_names = file.read().split(',')
 
-load_dotenv()
-api_key = os.getenv('my_api_key')
-weather = get_weather_forecast(city_name=city_names, api_key=api_key)
-convert_list_to_gzip(list=weather)
+if __name__=='__main__':
+    api_key = os.getenv('my_api_key')
+    weather = get_weather_forecast(city_name=city_names, api_key=api_key)
+    convert_list_to_gzip(lst=weather)
